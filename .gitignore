@@ -1,0 +1,42 @@
+# Build output
+build/
+out/
+cmake-build-*/
+compile_commands.json
+
+# Data: raw downloads never go in git
+data/raw/
+data/interim/
+*.tif.aux.xml
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.streamlit/secrets.toml
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code personal settings (project settings.json IS committed)
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Office lock files (e.g. ~$oject_overview.docx while Word has it open)
+~$*
+
+# Original plan kept in the folder root; the tracked copy is docs/plan/project_plan_v1.0.docx
+/project_overview.docx
