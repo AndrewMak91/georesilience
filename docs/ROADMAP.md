@@ -22,12 +22,11 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 
 ## M0 — Kickoff (Week 0, today)
 
-> **RESUME HERE (paused 2026-11-16).** M0 decisions are made: **Los Angeles County, H3 res 8**
-> (see docs/decisions/0002-study-area.md). Next session:
-> 1. Commit the decision files: `git add -A && git commit -m "M0: study area + unit of analysis" && git push`
-> 2. Sync the updated weekly checklists to GitHub issues: `python3 scripts/sync_github_issues.py --dry-run`, then without `--dry-run`
+> **RESUME HERE.** M0 is complete (LA County, H3 res 8; start date 2026-11-16). Next:
+> 1. `git add -A && git commit -m "M0 complete: study area, unit of analysis, start date" && git push`
+> 2. `python3 scripts/sync_github_issues.py --dry-run`, then without `--dry-run`; close the M0 issue
 > 3. If not done: Settings → Code security → secret scanning + push protection
-> 4. Start Week 1 (Claude Code: `/week-start`). Delete this note then.
+> 4. Start Week 1 in Claude Code (`claude`, then `/week-start`). Delete this note then.
 
 - [x] Run `scripts/check_env.ps1` (Windows); fix anything marked MISSING
 - [x] Run `scripts/check_env.sh` (WSL); fix anything marked MISSING
@@ -35,7 +34,7 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [x] Confirm the CI workflow passes on GitHub
 - [x] Run `scripts/create_github_milestones.py` to create milestones and weekly issues
 - [x] Pick the study area and unit of analysis: **Los Angeles County, H3 res 8** (`docs/decisions/0002-study-area.md`)
-- [ ] Set a start date and replace "TBD" in this file
+- [x] Set a start date: **Week 1 starts 2026-11-16**
 - QGIS install deliberately skipped at M0; it is the first item of Week 7
 
 ## M1 — Development foundation (Weeks 1–4)

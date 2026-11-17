@@ -9,7 +9,7 @@ Nothing that runs publicly needs a paid service or a secret. The C++ engine runs
 your laptop / CI ──(C++ engine)──► results/*.geojson, *.csv  ──commit──► GitHub ──► free host
 ```
 
-## Options (decide in Week 18)
+## Options (decide in Week 24)
 
 | Option | Cost | Fits when | Watch out for |
 |---|---|---|---|
