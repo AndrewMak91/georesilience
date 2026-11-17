@@ -7,6 +7,4 @@ TEST(GdalEnv, RegistersDrivers) {
   EXPECT_GT(georesilience::io::gdal_driver_count(), 0);
 }
 
-TEST(GdalEnv, ReportsVersion) {
-  EXPECT_FALSE(georesilience::io::gdal_version().empty());
-}
+TEST(GdalEnv, ReportsVersion) { EXPECT_FALSE(georesilience::io::gdal_version().empty()); }

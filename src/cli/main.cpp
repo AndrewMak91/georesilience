@@ -10,9 +10,7 @@
 
 namespace {
 
-void print_usage() {
-  std::cout << "Usage: georesilience [--version | --help]\n";
-}
+void print_usage() { std::cout << "Usage: georesilience [--version | --help]\n"; }
 
 }  // namespace
 
