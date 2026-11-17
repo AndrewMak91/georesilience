@@ -20,6 +20,14 @@ Current phase and tasks: @docs/ROADMAP.md. Architecture: @docs/architecture.md.
 - QGIS was not installed during setup. When I reach Week 7 (or any task needing a reference GIS
   check), remind me to install it first: `winget install --id OSGeo.QGIS_LTR -e`.
 
+## Study area and unit (ADR 0002)
+
+- Los Angeles County; unit of analysis is **H3 res 8** hexes (`h3_id`). Tracts (`GEOID`) are only
+  the demographic source, interpolated to hexes.
+- Keep the engine unit-agnostic: the unit polygon layer and ID field come from config, never hard-coded.
+- Do **not** build a tract/hex toggle in v1. It's in the v1.1 backlog in ROADMAP.md. If a request
+  would add new scope, point me to the backlog instead.
+
 ## How to work with me (the developer is learning — this matters)
 
 - I am building this to learn and to show my own skills. **Explain the approach before writing

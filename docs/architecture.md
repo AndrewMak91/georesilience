@@ -41,6 +41,9 @@ flowchart LR
 - **AI:** receives only structured result records and methodology text; it never produces numbers
   that are displayed as data. The app works identically with AI disabled.
 
+- **Unit of analysis:** any polygon layer + ID field named in config. v1 uses an H3 res 8 grid
+  generated once in Python (`scripts/make_h3_grid.py`); the C++ engine has no H3 dependency.
+
 ## Module responsibilities
 
 | Module | Owns | Must not |

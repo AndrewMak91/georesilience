@@ -10,6 +10,7 @@ Fill one row per dataset **before** using it. Verify licenses on the source page
 | DS-04 | G (green space) | NLCD tree canopy cover | USFS / MRLC | | GeoTIFF | % canopy, 30 m | | | Alternative: NDVI from the same Landsat scenes |
 | DS-05 | (optional) | CDC/ATSDR Social Vulnerability Index | CDC/ATSDR | | CSV/SHP | percentile | | | Could replace a custom V; check tract vintage |
 | DS-06 | ML feature | NLCD impervious surface | USGS / MRLC | | GeoTIFF | % impervious, 30 m | | | Used in M5 ML model |
+| DS-08 | Unit of analysis | H3 hexagonal grid, resolution 8 (generated with `h3-py`) | Uber H3 (open source) | | GeoPackage (generated) | EPSG:4326 cells | Apache-2.0 library | Yes (generated) | Clipped to LA County; ID field `h3_id` |
 | DS-07 | Validation outcome | Heat-related ER visits / EMS heat calls, or urban heat campaign air temperature | State/county health dept, or city/NOAA campaign | | CSV/SHP | count/rate or °C | | | Must be independent of LST; record geographic level and suppression rules |
 
 ## Candidate vulnerability fields (pick 2–4 for the MVP)

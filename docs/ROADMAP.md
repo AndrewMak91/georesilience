@@ -1,6 +1,6 @@
 # GeoResilience Roadmap
 
-32 weeks · ~112 hours · 3–4 h/week. **Progress is tracked by checkboxes, not dates**: the current step
+32 weeks · ~116 hours · 3–4 h/week. **Progress is tracked by checkboxes, not dates**: the current step
 is the first week with unchecked items, however long it takes to get there. Derived from the Project Plan v1.0, with the changes listed in
 [Changes from plan v1.0](#changes-from-plan-v10). A milestone is complete when its **acceptance
 gate** passes, not when its week ends.
@@ -11,7 +11,7 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 |---|---|---|---|
 | **M0 Kickoff** | 0 | 2 | Repo on GitHub, CI green, tools verified, study area chosen |
 | **M1 Foundation** | 1–4 | 14 | C++/GDAL exe reads a vector *and* a raster file and reports metadata; a clean build from README works |
-| **M2 Data pipeline** | 5–8 | 14 | Raw → validated, joined GeoPackage via one CLI command, with a quality report |
+| **M2 Data pipeline** | 5–8 | 17.5 | Raw → validated, joined GeoPackage via one CLI command, with a quality report |
 | **M3 Analytics engine** | 9–13 | 17.5 | Indicators + normalized weighted scores match hand-calculated cases within tolerance |
 | **M4 Evaluation** | 14–17 | 14 | ≥3 scenarios compared, rank stability quantified, limitations documented |
 | **M5 Data science extension** | 18–23 | 21 | Scores validated against a real outcome with uncertainty; one interpretable spatial-CV ML model; 5 PostGIS queries |
@@ -22,18 +22,19 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 
 ## M0 — Kickoff (Week 0, today)
 
-> **RESUME HERE (paused 2026-11-16).** Setup and first build are done (2 tests pass; GDAL 3.8.4).
-> GitHub login was restarted to keep work organizations out: step 1 (logout) is done.
-> Next: docs/github_setup.md **step 2**: create a fine-grained token owned by `AndrewMak91`, then
-> log in with it, verify, commit, `gh repo create`, and run `scripts/create_github_milestones.py`.
-> Delete this note once the repo is on GitHub.
+> **RESUME HERE (paused 2026-11-16).** M0 decisions are made: **Los Angeles County, H3 res 8**
+> (see docs/decisions/0002-study-area.md). Next session:
+> 1. Commit the decision files: `git add -A && git commit -m "M0: study area + unit of analysis" && git push`
+> 2. Sync the updated weekly checklists to GitHub issues: `python3 scripts/sync_github_issues.py --dry-run`, then without `--dry-run`
+> 3. If not done: Settings → Code security → secret scanning + push protection
+> 4. Start Week 1 (Claude Code: `/week-start`). Delete this note then.
 
 - [x] Run `scripts/check_env.ps1` (Windows); fix anything marked MISSING
 - [x] Run `scripts/check_env.sh` (WSL); fix anything marked MISSING
-- [ ] Create the GitHub repo `georesilience` and push this scaffold
-- [ ] Confirm the CI workflow passes on GitHub
-- [ ] Run `scripts/create_github_milestones.py` to create milestones and weekly issues
-- [ ] Pick the study area (one county or city) and record it in `docs/decisions/0002-study-area.md`
+- [x] Create the GitHub repo `georesilience` and push this scaffold
+- [x] Confirm the CI workflow passes on GitHub
+- [x] Run `scripts/create_github_milestones.py` to create milestones and weekly issues
+- [x] Pick the study area and unit of analysis: **Los Angeles County, H3 res 8** (`docs/decisions/0002-study-area.md`)
 - [ ] Set a start date and replace "TBD" in this file
 - QGIS install deliberately skipped at M0; it is the first item of Week 7
 
@@ -42,14 +43,14 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 **Week 1 — Requirements & data scouting** (3.5 h)
 - [ ] Finalize MVP requirements checklist in `docs/requirements.md`
 - [ ] Fill in the first three rows of `docs/data_sources.md` (boundaries, demographics, heat)
-- [ ] Decide unit of analysis (recommended: census tract, joined on 11-digit `GEOID`)
+- [x] Decide unit of analysis: H3 res 8 hexes; tracts (11-digit `GEOID`) remain the demographic source (decided at M0)
 - [ ] Review `docs/architecture.md` diagram; adjust if needed
 - [ ] Open the initial risk review in `docs/risk_register.md`
 
 **Week 2 — C++ / CMake build + CI** (3.5 h)
 - [x] `cmake --preset dev && cmake --build --preset dev && ctest --preset dev` passes locally
 - [x] `georesilience --version` prints app + GDAL versions
-- [ ] CI workflow green on GitHub (moved earlier than plan v1.0)
+- [x] CI workflow green on GitHub (moved earlier than plan v1.0)
 - [x] Record exact compiler / CMake / GDAL versions in `docs/dev_setup.md` (done during setup)
 
 **Week 3 — GDAL vector *and* raster reading** (3.5 h)
@@ -73,6 +74,7 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Get canopy (NLCD tree canopy) and impervious surface layers clipped to the study area (impervious is used in M5)
 - [ ] Record source, date, units, license, and known limitations for each
 - [ ] Commit only small clipped samples to `data/sample/`; keep raw files out of git
+- [ ] Create `.venv` with `h3` and `geopandas`; write `scripts/make_h3_grid.py` to generate the H3 res 8 grid over LA County and save `data/interim/h3_r8.gpkg` (ID field `h3_id`)
 
 **Week 6 — Attribute joins & validation** (3.5 h)
 - [ ] Join demographics to boundaries on `GEOID`
@@ -85,9 +87,11 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Detect missing/unexpected CRS; reproject to one projected CRS for area/distance (e.g. the local UTM zone)
 - [ ] Geometry validity check with a documented repair-or-reject policy
 - [ ] Test known areas/distances against a reference (QGIS)
+- [ ] Area-weighted interpolation of tract counts to hexes (then compute rates per hex); approximate MOE; flag hexes with very few residents
+- [ ] Test interpolation: hex totals sum back to tract/county totals within tolerance
 
 **Week 8 — Pipeline integration & M2 review** (3.5 h)
-- [ ] `georesilience prepare --config ... --out ...` runs raw → clean GeoPackage
+- [ ] `georesilience prepare --config ... --out ...` runs raw → clean hex GeoPackage; unit layer + ID field come from config (unit-agnostic)
 - [ ] Logging + quality report written alongside output
 - [ ] Integration test on `data/sample/`
 - [ ] Start the Python analysis layer: `analysis/requirements.txt` (geopandas, rasterio, xarray/rioxarray, jupyter) and a first notebook that loads the GeoPackage and maps it
@@ -99,12 +103,12 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] `docs/methodology.md`: definition, unit, direction, source for H, V, G
 - [ ] Define how canopy % becomes "lack of green space" (G = 1 − canopy share)
 - [ ] Missing-data rule per indicator
-- [ ] Hand-calculated reference table (5–10 tracts) in `tests/data/reference_scores.csv`
+- [ ] Hand-calculated reference table (5–10 hexes) in `tests/data/reference_scores.csv`
 
 **Week 10 — Zonal statistics & indicators** (3.5 h)
-- [ ] Raster zonal mean (heat) and zonal share (canopy) per tract
+- [ ] Raster zonal mean (heat) and zonal share (canopy) per hex
 - [ ] Vulnerability indicator from ACS fields
-- [ ] Flag tracts with no valid pixels
+- [ ] Flag hexes with no valid pixels; exclude unpopulated/forest/desert/water hexes from ranking
 - [ ] Tests against a tiny synthetic raster with known answers
 
 **Week 11 — Normalization & scoring** (3.5 h)
@@ -119,8 +123,8 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Re-run test: same inputs + config → identical outputs
 
 **Week 13 — Integration & M3 review** (3.5 h)
-- [ ] Full run on the study area; inspect top/bottom ranked tracts
-- [ ] Spot-check 3 tracts by hand
+- [ ] Full run on LA County; inspect top/bottom ranked hexes
+- [ ] Spot-check 3 hexes by hand
 - [ ] Quick static map for sanity
 - [ ] Tag `v0.3.0`, write `docs/reviews/M3.md`
 
@@ -173,7 +177,7 @@ scores back.
 - [ ] Write "How I know the score works (and where it doesn't)" section in `docs/model_validation.md`
 
 **Week 21 — ML: predicting surface temperature** (3.5 h)
-- [ ] Features per tract (or 30 m pixel sample): tree canopy, impervious surface, land cover shares, NDVI, optionally elevation
+- [ ] Features per H3 res 8 hex: tree canopy, impervious surface, land cover shares, NDVI, optionally elevation
 - [ ] Baseline linear model vs gradient boosting (scikit-learn / LightGBM)
 - [ ] Spatial (block) cross-validation, not random splits; report RMSE/MAE and R²
 
@@ -239,6 +243,14 @@ scores back.
 
 ---
 
+## Backlog: v1.1 (minor update after v1.0.0, not a new version)
+
+- Unit toggle: run and view results by census tract **or** H3 (config + dashboard)
+- Dasymetric interpolation (weight by developed land / impervious surface)
+- Bangkok extension with global datasets (later, post-v1)
+
+Anything new that comes up mid-project goes here first, not into the current milestone.
+
 ## Flex rules
 
 - If a week overruns, the next week's lowest-priority item moves to the end of the phase, not the
@@ -275,3 +287,6 @@ before any full removal (Level 3).
    hotspot statistics (Week 15), PostGIS/spatial SQL, validation against real outcomes with
    uncertainty, and one interpretable ML model with spatial cross-validation. Interface and release
    become M6 and M7; the README and write-up are strengthened for hiring managers.
+10. **Study area and unit decided at M0:** Los Angeles County, H3 res 8 (ADR 0002). Adds tract → hex
+    interpolation to M2 (+~3.5 h). The tract/hex toggle is deferred to the v1.1 backlog to avoid
+    scope creep; the engine stays unit-agnostic so the toggle is a small change later.
