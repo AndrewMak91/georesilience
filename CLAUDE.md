@@ -22,8 +22,9 @@ Current phase and tasks: @docs/ROADMAP.md. Architecture: @docs/architecture.md.
 
 ## Study area and unit (ADR 0002)
 
-- Los Angeles County; unit of analysis is **H3 res 8** hexes (`h3_id`). Tracts (`GEOID`) are only
-  the demographic source, interpolated to hexes.
+- Los Angeles County; unit of analysis is **H3 res 8** hexes (`h3_id`). Demographics come from
+  2020 Census blocks (`GEOID20`) plus ACS tracts (`GEOID`, poverty/vehicles only); both are
+  allocated to hexes by block internal point. Heat is population-weighted (ADR 0002, Amendment 1).
 - Keep the engine unit-agnostic: the unit polygon layer and ID field come from config, never hard-coded.
 - Do **not** build a tract/hex toggle in v1. It's in the v1.1 backlog in ROADMAP.md. If a request
   would add new scope, point me to the backlog instead.

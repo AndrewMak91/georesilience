@@ -5,7 +5,9 @@ Fill one row per dataset **before** using it. Verify licenses on the source page
 | ID | Indicator | Dataset | Publisher | Vintage | Format | Unit / CRS | License / attribution | Redistributable sample? | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | DS-01 | Boundaries | TIGER/Line census tracts | U.S. Census Bureau | | Shapefile | EPSG:4269 (NAD83) | | | Join key `GEOID` (11 digits) |
-| DS-02 | V (vulnerability) | ACS 5-year detailed/subject tables | U.S. Census Bureau | | CSV / API | counts, % | | | Keep margins of error; match tract vintage to DS-01 |
+| DS-02 | V (vulnerability) | ACS 5-year detailed/subject tables | U.S. Census Bureau | | CSV / API | counts, % | | | Only for fields not in the 2020 Census (poverty, no-vehicle households). Keep margins of error; match tract vintage to DS-01 |
+| DS-09 | V + population weights | 2020 Census Demographic and Housing Characteristics (DHC), block level | U.S. Census Bureau | 2020 | CSV / API | counts | | | Total population, age 65+, 65+ living alone (verify which tables are published at block level). Block counts carry differential-privacy noise; use summed to hexes, not per block. Join key `GEOID20` (15 digits) |
+| DS-10 | Population allocation | TIGER/Line 2020 census blocks | U.S. Census Bureau | 2020 | Shapefile | EPSG:4269 (NAD83) | | | Use the internal point (`INTPTLAT20`, `INTPTLON20`), which is guaranteed inside the block, rather than a computed centroid |
 | DS-03 | H (heat) | Landsat Collection 2 Level-2 surface temperature (summer, low cloud) | USGS (via a STAC catalog) | | Cloud-Optimized GeoTIFF | Kelvin (scaled) | | | LST ≠ air temperature; record scene IDs, dates, STAC endpoint, and scaling factors |
 | DS-04 | G (green space) | NLCD tree canopy cover | USFS / MRLC | | GeoTIFF | % canopy, 30 m | | | Alternative: NDVI from the same Landsat scenes |
 | DS-05 | (optional) | CDC/ATSDR Social Vulnerability Index | CDC/ATSDR | | CSV/SHP | percentile | | | Could replace a custom V; check tract vintage |
@@ -15,10 +17,18 @@ Fill one row per dataset **before** using it. Verify licenses on the source page
 
 ## Candidate vulnerability fields (pick 2–4 for the MVP)
 
-- Share of population age 65+
-- Share below poverty line
-- Share of households without a vehicle
-- Share of people living alone age 65+
+- Share of population age 65+ (2020 Census, DS-09)
+- Share of people living alone age 65+ (2020 Census, DS-09)
+- Share below poverty line (ACS, DS-02)
+- Share of households without a vehicle (ACS, DS-02)
+
+## Candidates to scout in Week 5 (not registered for use yet)
+
+Landsat thermal is captured at 100 m and delivered resampled to 30 m. Look for finer data, then add a
+row above before using any of these:
+
+- Heat: ECOSTRESS land surface temperature (~70 m); airborne heat-mapping campaigns over LA, if any
+- Canopy: 1 m tree canopy datasets covering LA County; NAIP imagery (~0.6 m) for NDVI
 
 ## Rules
 

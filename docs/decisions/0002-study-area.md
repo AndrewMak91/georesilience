@@ -1,6 +1,6 @@
 # ADR 0002 — Study area and unit of analysis
 
-**Status:** Accepted (2026-11-16)
+**Status:** Accepted (2026-11-16); amended 2026-11-19 (see [Amendment 1](#amendment-1-2026-11-19--population-weighting))
 
 ## Decision
 
@@ -39,3 +39,27 @@
 
 - Bangkok, using global datasets (land cover, gridded population), to show the method transfers
   internationally.
+
+## Amendment 1 (2026-11-19) — population weighting
+
+Replaces the **Demographic source** row and the Week 7 interpolation consequence above. The unit of
+analysis (H3 res 8) and study area are unchanged.
+
+| Concern | New choice |
+|---|---|
+| Demographic source | **Hybrid:** 2020 Census DHC at **block** level (population, age 65+, 65+ living alone) + ACS 5-year at **tract** level only for fields the 2020 Census lacks (poverty, no-vehicle households) |
+| Allocation to hexes | Each block's counts go to the hex containing its TIGER/Line internal point. ACS tract counts are split to blocks by population share, then summed per hex. Rates are computed after allocation |
+| Heat indicator (H) | **Population-weighted:** mean LST per block, averaged per hex weighted by block population. The plain area mean is kept for comparison |
+| New output | Exposure columns (residents, residents 65+ per hex), reported next to the score, not part of it |
+
+**Why:** area-weighted interpolation assumes people are spread evenly within a tract, so hexes over
+rail yards, parks, or industrial land received residents they don't have. Blocks are far smaller, so
+the score better reflects heat **where people live**.
+
+**Consequences:**
+- Most of the "dasymetric" backlog item is now in v1 at block level; only finer allocation within
+  blocks (building footprints, impervious surface) stays in v1.1.
+- Block counts carry 2020 Census differential-privacy noise; use them summed to hexes, not per block.
+- Poverty and vehicle fields are still tract-level detail even when shown per hex (documented in
+  `docs/requirements.md` IR-07). ACS margins of error are still carried.
+- Adds ~1–1.5 h across Weeks 5 and 10 (ROADMAP change 11).

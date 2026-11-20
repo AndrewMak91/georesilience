@@ -22,12 +22,6 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 
 ## M0 — Kickoff (Week 0, today)
 
-> **RESUME HERE.** M0 is complete (LA County, H3 res 8; start date 2026-11-16). Next:
-> 1. `git add -A && git commit -m "M0 complete: study area, unit of analysis, start date" && git push`
-> 2. `python3 scripts/sync_github_issues.py --dry-run`, then without `--dry-run`; close the M0 issue
-> 3. If not done: Settings → Code security → secret scanning + push protection
-> 4. Start Week 1 in Claude Code (`claude`, then `/week-start`). Delete this note then.
-
 - [x] Run `scripts/check_env.ps1` (Windows); fix anything marked MISSING
 - [x] Run `scripts/check_env.sh` (WSL); fix anything marked MISSING
 - [x] Create the GitHub repo `georesilience` and push this scaffold
@@ -68,7 +62,9 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 
 **Week 5 — Data acquisition** (3.5 h)
 - [ ] Download tract boundaries (TIGER/Line) for the study area
-- [ ] Pull ACS demographic table(s) for the same tracts and vintage
+- [ ] Pull ACS demographic table(s) for the same tracts and vintage (poverty, no-vehicle households only)
+- [ ] Pull 2020 Census DHC block counts (population, age 65+, 65+ living alone) and TIGER/Line 2020 blocks
+- [ ] Scout finer heat and canopy rasters (candidates in `docs/data_sources.md`)
 - [ ] Get heat layer (Landsat Collection 2 surface temperature) via a **STAC search** (`pystac-client`, e.g. Microsoft Planetary Computer or Earth Search) instead of manual downloads; read the Cloud-Optimized GeoTIFFs with windowed reads (GDAL `/vsicurl/`) clipped to the study area
 - [ ] Get canopy (NLCD tree canopy) and impervious surface layers clipped to the study area (impervious is used in M5)
 - [ ] Record source, date, units, license, and known limitations for each
@@ -86,8 +82,8 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Detect missing/unexpected CRS; reproject to one projected CRS for area/distance (e.g. the local UTM zone)
 - [ ] Geometry validity check with a documented repair-or-reject policy
 - [ ] Test known areas/distances against a reference (QGIS)
-- [ ] Area-weighted interpolation of tract counts to hexes (then compute rates per hex); approximate MOE; flag hexes with very few residents
-- [ ] Test interpolation: hex totals sum back to tract/county totals within tolerance
+- [ ] Allocate people to hexes by Census 2020 block internal point; split ACS tract counts to blocks by population share, then sum per hex (then compute rates per hex); approximate MOE; flag hexes with very few residents
+- [ ] Test allocation: hex totals sum back to block/tract/county totals within tolerance
 
 **Week 8 — Pipeline integration & M2 review** (3.5 h)
 - [ ] `georesilience prepare --config ... --out ...` runs raw → clean hex GeoPackage; unit layer + ID field come from config (unit-agnostic)
@@ -106,6 +102,7 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 
 **Week 10 — Zonal statistics & indicators** (3.5 h)
 - [ ] Raster zonal mean (heat) and zonal share (canopy) per hex
+- [ ] Population-weighted heat: mean LST per block, averaged per hex weighted by block population (area mean kept for comparison); exposure columns (residents, residents 65+)
 - [ ] Vulnerability indicator from ACS fields
 - [ ] Flag hexes with no valid pixels; exclude unpopulated/forest/desert/water hexes from ranking
 - [ ] Tests against a tiny synthetic raster with known answers
@@ -245,7 +242,8 @@ scores back.
 ## Backlog: v1.1 (minor update after v1.0.0, not a new version)
 
 - Unit toggle: run and view results by census tract **or** H3 (config + dashboard)
-- Dasymetric interpolation (weight by developed land / impervious surface)
+- Finer population allocation within blocks (building footprints / impervious surface); v1 allocates by Census 2020 block
+- Optional Esri GeoEnrichment demographics: local only, off by default; investigate cost (credits), license (redistribution), and API-key handling first
 - Bangkok extension with global datasets (later, post-v1)
 
 Anything new that comes up mid-project goes here first, not into the current milestone.
@@ -289,3 +287,7 @@ before any full removal (Level 3).
 10. **Study area and unit decided at M0:** Los Angeles County, H3 res 8 (ADR 0002). Adds tract → hex
     interpolation to M2 (+~3.5 h). The tract/hex toggle is deferred to the v1.1 backlog to avoid
     scope creep; the engine stays unit-agnostic so the toggle is a small change later.
+11. **Population weighting added at Week 1** (`docs/requirements.md`): people are allocated to hexes by
+    Census 2020 block instead of uniform tract area, heat is population-weighted, and exposure columns
+    are exported. Demographics become a hybrid of 2020 Census (block) and ACS (tract; poverty and
+    vehicles only). Adds ~1–1.5 h across Weeks 5 and 10. Esri enrichment goes to the v1.1 backlog.
