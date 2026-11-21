@@ -53,9 +53,12 @@ where people live.
 - Effort: ~1–1.5 h across Weeks 5 and 10 (ROADMAP change 11); block groups instead of tracts add no
   scheduled time beyond the Week 5 availability check.
 
-## Open items (Week 5)
+## Open items — resolved (2026-11-20)
 
-- Confirm C17002 and B25044 are published at block group in the chosen ACS 5-year vintage, with
-  2020-based block-group codes. If not, use the tract fallback and update this ADR.
-- Confirm which of the three block fields DHC publishes at block level, especially 65+ living alone
-  (DS-09). If one is missing, take it from ACS block groups using the split above.
+- **ACS block groups:** C17002 and B25044 are published at block group in the 2020–2024 ACS 5-year
+  table-based summary file. LA County block-group codes are identical in the 2020, 2024, and 2026
+  TIGER/Line files (6,591). The tract fallback is not needed (DS-02).
+- **DHC block fields:** all three are published at block level (2020 Census Data Product Crosswalk,
+  May 2023): total population = P1; age 65+ = P12 cells 20–25 + 44–49; 65+ living alone = **P19
+  cell 3** (one-person households with a person 65+). Chosen over the equivalent H14 cells because
+  it is a single cell (DS-09).
