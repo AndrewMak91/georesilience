@@ -34,11 +34,11 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 ## M1 — Development foundation (Weeks 1–4)
 
 **Week 1 — Requirements & data scouting** (3.5 h)
-- [ ] Finalize MVP requirements checklist in `docs/requirements.md`
-- [ ] Fill in the first three rows of `docs/data_sources.md` (boundaries, demographics, heat)
+- [x] Finalize MVP requirements checklist in `docs/requirements.md`
+- [x] Fill in the first three rows of `docs/data_sources.md` (boundaries, demographics, heat)
 - [x] Decide unit of analysis: H3 res 8 hexes; tracts (11-digit `GEOID`) remain the demographic source (decided at M0)
-- [ ] Review `docs/architecture.md` diagram; adjust if needed
-- [ ] Open the initial risk review in `docs/risk_register.md`
+- [x] Review `docs/architecture.md` diagram; adjust if needed
+- [x] Open the initial risk review in `docs/risk_register.md`
 
 **Week 2 — C++ / CMake build + CI** (3.5 h)
 - [x] `cmake --preset dev && cmake --build --preset dev && ctest --preset dev` passes locally
@@ -62,7 +62,7 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 
 **Week 5 — Data acquisition** (3.5 h)
 - [ ] Download tract boundaries (TIGER/Line) for the study area
-- [ ] Pull ACS demographic table(s) for the same tracts and vintage (poverty, no-vehicle households only)
+- [ ] Pull ACS 5-year poverty (C17002) and no-vehicle households (B25044) at **block group**; first confirm both are published at block group with 2020-based codes, else use tracts (ADR 0003)
 - [ ] Pull 2020 Census DHC block counts (population, age 65+, 65+ living alone) and TIGER/Line 2020 blocks
 - [ ] Scout finer heat and canopy rasters (candidates in `docs/data_sources.md`)
 - [ ] Get heat layer (Landsat Collection 2 surface temperature) via a **STAC search** (`pystac-client`, e.g. Microsoft Planetary Computer or Earth Search) instead of manual downloads; read the Cloud-Optimized GeoTIFFs with windowed reads (GDAL `/vsicurl/`) clipped to the study area
@@ -72,7 +72,7 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Create `.venv` with `h3` and `geopandas`; write `scripts/make_h3_grid.py` to generate the H3 res 8 grid over LA County and save `data/interim/h3_r8.gpkg` (ID field `h3_id`)
 
 **Week 6 — Attribute joins & validation** (3.5 h)
-- [ ] Join demographics to boundaries on `GEOID`
+- [ ] Join 2020 block counts to blocks on `GEOID20`; link ACS block groups to blocks by the 12-digit `GEOID` prefix
 - [ ] Report duplicates, unmatched records, missing/invalid numbers (never silently zero)
 - [ ] Carry ACS margins of error and flag unreliable estimates
 - [ ] Tests for duplicate and missing IDs
@@ -82,8 +82,8 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Detect missing/unexpected CRS; reproject to one projected CRS for area/distance (e.g. the local UTM zone)
 - [ ] Geometry validity check with a documented repair-or-reject policy
 - [ ] Test known areas/distances against a reference (QGIS)
-- [ ] Allocate people to hexes by Census 2020 block internal point; split ACS tract counts to blocks by population share, then sum per hex (then compute rates per hex); approximate MOE; flag hexes with very few residents
-- [ ] Test allocation: hex totals sum back to block/tract/county totals within tolerance
+- [ ] Allocate people to hexes by Census 2020 block internal point; split ACS block-group counts to blocks by population share, then sum per hex (then compute rates per hex); approximate MOE; flag hexes with very few residents (ADR 0003)
+- [ ] Test allocation: hex totals sum back to block/block-group/county totals within tolerance; report blocks whose internal point falls in no hex
 
 **Week 8 — Pipeline integration & M2 review** (3.5 h)
 - [ ] `georesilience prepare --config ... --out ...` runs raw → clean hex GeoPackage; unit layer + ID field come from config (unit-agnostic)
@@ -131,7 +131,7 @@ never feed scores back.
 
 **Week 14 — Weighting scenarios** (3.5 h)
 - [ ] ≥3 scenario configs (baseline 40/35/25, equal, vulnerability-heavy)
-- [ ] Rank comparison table/chart; list tracts that move most
+- [ ] Rank comparison table/chart; list hexes that move most
 
 **Week 15 — Indicator relationships & data quality** (3.5 h)
 - [ ] Descriptive stats, distributions, outliers
@@ -141,7 +141,7 @@ never feed scores back.
 
 **Week 16 — Sensitivity & validation** (3.5 h)
 - [ ] Spearman/Kendall rank correlation between scenarios; top-k overlap
-- [ ] Monte Carlo weight perturbation (Dirichlet) → rank-interval per tract
+- [ ] Monte Carlo weight perturbation (Dirichlet) → rank-interval per hex
 - [ ] Independent check of selected outputs in QGIS or GeoPandas
 
 **Week 17 — Evaluation report & M4 review** (3.5 h)
@@ -157,8 +157,8 @@ scores back.
 
 **Week 18 — Spatial SQL with PostGIS** (3.5 h)
 - [ ] Install PostgreSQL + PostGIS in WSL (`sudo apt install postgresql postgis`)
-- [ ] Load tracts, indicators, and scores with `ogr2ogr`
-- [ ] Write 5 saved queries in `sql/` (e.g. top-10 tracts per county subdivision, tracts within 500 m of a park layer, score summary by income band, spatial join to an outcome layer)
+- [ ] Load hexes, indicators, and scores with `ogr2ogr`
+- [ ] Write 5 saved queries in `sql/` (e.g. top-10 hexes per county subdivision, hexes within 500 m of a park layer, score summary by income band, spatial join to an outcome layer)
 - [ ] Document the schema in `docs/data_dictionary.md`
 
 **Week 19 — External outcome data** (3.5 h)
@@ -175,7 +175,7 @@ scores back.
 **Week 21 — ML: predicting surface temperature** (3.5 h)
 - [ ] Features per H3 res 8 hex: tree canopy, impervious surface, land cover shares, NDVI, optionally elevation
 - [ ] Baseline linear model vs gradient boosting (scikit-learn / LightGBM)
-- [ ] Spatial (block) cross-validation, not random splits; report RMSE/MAE and R²
+- [ ] Spatial block cross-validation (geographic folds, not Census blocks), not random splits; report RMSE/MAE and R²
 
 **Week 22 — ML interpretation** (3.5 h)
 - [ ] Feature importance with SHAP or permutation importance; partial dependence for canopy and impervious surface
@@ -184,14 +184,14 @@ scores back.
 
 **Week 23 — Notebook polish & M5 review** (3.5 h)
 - [ ] Clean, re-runnable notebooks: `analysis/01_eda.ipynb`, `02_validation.ipynb`, `03_ml_lst.ipynb`
-- [ ] Add exported validation/ML summaries to the results contract for the dashboard
+- [ ] Export validation/ML summaries for the dashboard, ready to add to the results contract in Week 24
 - [ ] Tag `v0.5.0`, write `docs/reviews/M5.md`
 
 ## M6 — Interface and optional AI (Weeks 24–28)
 
 **Week 24 — Results contract & layout** (3.5 h)
 - [ ] `docs/results_contract.md`: exact exported fields the dashboard may read
-- [ ] Wireframe: map, ranked table, scenario selector, tract detail, validation and ML findings panel
+- [ ] Wireframe: map, ranked table, scenario selector, hex detail, validation and ML findings panel
 - [ ] Decide host (see `docs/hosting.md`): Streamlit Community Cloud or GitHub Pages
 
 **Week 25 — Map, ranks, charts** (3.5 h)
@@ -202,10 +202,10 @@ scores back.
 **Week 26 — Scenario controls & explanations** (3.5 h)
 - [ ] Predefined scenarios from engine exports
 - [ ] Optional custom weights: dashboard does only the weighted sum of engine-exported *normalized* indicators, with a parity test against the engine
-- [ ] Per-tract contribution breakdown; two-tract comparison
+- [ ] Per-hex contribution breakdown; two-hex comparison
 
 **Week 27 — Explanations (template first, AI optional)** (3.5 h)
-- [ ] Deterministic template explanations ("Tract A ranks above B mainly because…") — this ships publicly
+- [ ] Deterministic template explanations ("Hex A ranks above B mainly because…") — this ships publicly
 - [ ] Optional: local LLM (e.g. Ollama) or API, *local only*, off by default, grounded in result records
 - [ ] Reliability tests: unsupported questions get a limitation statement
 
@@ -242,7 +242,7 @@ scores back.
 ## Backlog: v1.1 (minor update after v1.0.0, not a new version)
 
 - Unit toggle: run and view results by census tract **or** H3 (config + dashboard)
-- Finer population allocation within blocks (building footprints / impervious surface); v1 allocates by Census 2020 block
+- Finer population allocation within blocks (building footprints / impervious surface); v1 allocates by Census 2020 block (ADR 0003)
 - Optional Esri GeoEnrichment demographics: local only, off by default; investigate cost (credits), license (redistribution), and API-key handling first
 - Bangkok extension with global datasets (later, post-v1)
 
@@ -287,7 +287,7 @@ before any full removal (Level 3).
 10. **Study area and unit decided at M0:** Los Angeles County, H3 res 8 (ADR 0002). Adds tract → hex
     interpolation to M2 (+~3.5 h). The tract/hex toggle is deferred to the v1.1 backlog to avoid
     scope creep; the engine stays unit-agnostic so the toggle is a small change later.
-11. **Population weighting added at Week 1** (`docs/requirements.md`): people are allocated to hexes by
+11. **Population weighting added at Week 1** (ADR 0003, `docs/requirements.md`): people are allocated to hexes by
     Census 2020 block instead of uniform tract area, heat is population-weighted, and exposure columns
-    are exported. Demographics become a hybrid of 2020 Census (block) and ACS (tract; poverty and
-    vehicles only). Adds ~1–1.5 h across Weeks 5 and 10. Esri enrichment goes to the v1.1 backlog.
+    are exported. Demographics become a hybrid of 2020 Census (block) and ACS (block group, tract as
+    fallback; poverty and vehicles only). Adds ~1–1.5 h across Weeks 5 and 10. Esri enrichment goes to the v1.1 backlog.

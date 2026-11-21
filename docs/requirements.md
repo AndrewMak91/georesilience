@@ -1,11 +1,9 @@
 # MVP requirements
 
-> **DRAFT for review (Week 1).** Remove this note once approved.
-
 Sources: `docs/plan/project_plan_v1.0.md` (§1.3 success criteria, §2.1 scope, §8.3 interpretation,
-priority order), `docs/ROADMAP.md` milestone gates, ADR 0002 (study area and unit), and Week 1
-decisions (2026-11-19): population allocation by Census 2020 block, population-weighted heat,
-exposure columns, hybrid Census 2020 + ACS demographics.
+priority order), `docs/ROADMAP.md` milestone gates, ADR 0002 (study area and unit), and ADR 0003
+(2026-11-19): population allocation by Census 2020 block, population-weighted heat, exposure
+columns, hybrid Census 2020 + ACS block-group demographics.
 
 Priority: **P1** essential · **P2** high value · **P3** optional (must never put P1 at risk).
 
@@ -28,11 +26,11 @@ funding.
 |---|---|---|---|---|
 | FR-01 | Report metadata for a vector file (layers, features, geometry type, CRS) | P1 | M1 | — |
 | FR-02 | Report metadata for a raster file (size, bands, type, nodata, CRS, geotransform) | P1 | M1 | — |
-| FR-03 | Join Census 2020 block counts to blocks (15-digit `GEOID20`) and ACS estimates to tracts (11-digit `GEOID`); report duplicates, unmatched records, and missing values | P1 | M2 | FR-01 |
+| FR-03 | Join Census 2020 block counts to blocks (15-digit `GEOID20`) and ACS estimates to block groups (12-digit `GEOID`; tracts as fallback); report duplicates, unmatched records, and missing values | P1 | M2 | FR-01 |
 | FR-04 | Carry ACS margins of error; flag unreliable estimates | P1 | M2 | FR-03 |
 | FR-05 | Detect missing or unexpected CRS; reproject to one projected CRS | P1 | M2 | FR-01, FR-02 |
 | FR-06 | Check geometry validity with a documented repair-or-reject policy | P1 | M2 | FR-01 |
-| FR-07 | Allocate people to hexes by where they live: Census 2020 block counts go to the hex containing the block's internal point; ACS tract counts are split to blocks by population share, then summed per hex; rates computed after allocation | P1 | M2 | FR-03, FR-05, FR-06 |
+| FR-07 | Allocate people to hexes by where they live: Census 2020 block counts go to the hex containing the block's internal point; ACS block-group counts are split to blocks by population share, then summed per hex; rates computed after allocation. Hex totals must sum back to block, block-group, and county totals; blocks whose internal point falls in no hex, and ACS counts in block groups with zero 2020 population, are reported as unallocated, never dropped (ADR 0003) | P1 | M2 | FR-03, FR-05, FR-06 |
 | FR-08 | One `prepare` command: raw → validated hex GeoPackage + quality report | P1 | M2 | FR-03 – FR-07 |
 | FR-09 | Zonal statistics per hex: **population-weighted heat** (mean LST per block, averaged per hex weighted by block population), plain area-mean heat for comparison, canopy share; flag hexes with no valid pixels | P1 | M3 | FR-02, FR-05, FR-07, FR-08 |
 | FR-10 | Min-max and percentile normalization (handle min == max) | P1 | M3 | FR-07, FR-09 |
@@ -41,9 +39,9 @@ funding.
 | FR-13 | Export GeoPackage, GeoJSON, and CSV with run metadata, plus **exposure columns** (e.g. residents and residents 65+ per hex) reported next to the score but not part of it | P1 | M3 | FR-07, FR-11 |
 | FR-14 | Compare ≥3 weighting scenarios (baseline, equal, vulnerability-heavy) with Spearman rank correlation and top-k overlap. _Stretch: Monte Carlo (Dirichlet) weight perturbation_ | P1 | M4 | FR-12, FR-13 |
 | FR-15 | Validate scores against one independent outcome (not LST) at whatever geographic level it comes in: rank correlation + bootstrap CI. _Stretch: quintile rates, mismatch map_ | P1 | M5 | FR-13 |
-| FR-16 | One interpretable model predicting LST, compared with a linear baseline, using spatial (block) CV; report RMSE/MAE/R² + permutation importance. _Stretch: SHAP, residual Moran's I_ | P1 | M5 | FR-08, FR-09 |
+| FR-16 | One interpretable model predicting LST, compared with a linear baseline, using spatial block cross-validation (geographic folds, not Census blocks); report RMSE/MAE/R² + permutation importance. _Stretch: SHAP, residual Moran's I_ | P1 | M5 | FR-08, FR-09 |
 | FR-17 | Load engine exports into PostGIS with `ogr2ogr`; saved queries in `sql/`, schema in `data_dictionary.md`. Gate: 5 queries; flex minimum: 3 (at least one spatial join, one distance query) | P1 | M5 | FR-13 |
-| FR-18 | Public dashboard: map, ranks, scenarios, validation findings; readable by non-specialists (legend, plain-language notes) | P1 | M6 | FR-13, FR-14, FR-15 |
+| FR-18 | Public dashboard: map, ranks, scenarios, validation and ML findings; readable by non-specialists (legend, plain-language notes) | P1 | M6 | FR-13, FR-14, FR-15, FR-16 |
 | FR-19 | Template explanations of a hex's score and its components | P2 | M6 | FR-13 |
 | FR-20 | Optional local AI explanations, off by default, based only on result records | P3 | M6 | FR-19 |
 
@@ -78,8 +76,8 @@ From plan §8.3. Wherever results are shown (dashboard, report, README), the rea
 | IR-04 | Which weights produced the score shown |
 | IR-05 | How much each indicator contributes to a selected hex's score |
 | IR-06 | Whether that hex's rank changes under the other scenarios |
-| IR-07 | What the score cannot establish: no individual prediction; LST ≠ air temperature; poverty and vehicle data are tract-level even when shown per hex; data vintages |
-| IR-08 | Data-quality flags: few residents, unreliable ACS estimate, no valid pixels |
+| IR-07 | What the score cannot establish: no individual prediction; LST ≠ air temperature; poverty and vehicle data are block-group-level even when shown per hex; data vintages |
+| IR-08 | Data-quality flags: few residents, unreliable ACS estimate, no valid pixels (per hex or per block), unallocated population counts |
 
 Wording rule: high-scoring areas "may warrant further investigation". Never "at risk of illness",
 "needs funding", or "most dangerous".
