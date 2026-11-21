@@ -13,10 +13,11 @@ flowchart LR
     end
 
     subgraph Engine["C++20 engine (GDAL/OGR) — source of truth"]
-        IO[io<br/>open, read, CRS report, write outputs]
+        IOR[io read<br/>open, read, CRS report]
         VAL[validation<br/>IDs, nulls, geometry]
         SP[spatial<br/>reproject, join, block → hex allocation,<br/>zonal stats]
         AN[analytics<br/>normalize, weight, rank, scenarios]
+        IOW[io write<br/>write outputs]
         CLI[cli<br/>info / prepare / score]
     end
 
@@ -44,12 +45,12 @@ flowchart LR
         AI[Optional local LLM<br/>off by default]
     end
 
-    CFG & U & BL & P & D & T & C --> IO
-    IO --> VAL --> SP --> AN --> IO
-    IO -- prepare --> PG & QR
-    PG -- score --> IO
-    IO -- score --> G & J
-    CLI -.drives.-> IO
+    CFG & U & BL & P & D & T & C --> IOR
+    IOR --> VAL --> SP --> AN --> IOW
+    IOW -- prepare --> PG & QR
+    PG -- score --> IOR
+    IOW -- score --> G & J
+    CLI -.drives.-> IOR & IOW
     G & J --> NB
     G --> DB
     OUT & IMP --> NB
@@ -61,7 +62,7 @@ flowchart LR
 ## Boundaries
 
 - **Engine ↔ presentation:** the contract is the exported file schema (`docs/results_contract.md`,
-  Week 18). The dashboard never recomputes indicators or normalization.
+  Week 24). The dashboard never recomputes indicators or normalization.
 - **AI:** receives only structured result records and methodology text; it never produces numbers
   that are displayed as data. The app works identically with AI disabled.
 

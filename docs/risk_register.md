@@ -10,7 +10,7 @@ Reviewed at weeks 1, 4, 8, 13, 17, 23, 28, 32. Status: Open / Watching / Closed.
 | R4 | Spatial results incorrect | M | H | Projected CRS for area/distance; QGIS reference checks | Open |
 | R5 | Scope creep | H | H | Flex rules in ROADMAP; Priority-3 features last | Open |
 | R6 | Statistical interpretation overstated | M | H | Screening-index language everywhere; limitations doc | Open |
-| R7 | Dashboard integration slow | M | M | Results contract (Week 18); engine independent | Open |
+| R7 | Dashboard integration slow | M | M | Results contract (Week 24); engine independent | Open |
 | R8 | AI answers inaccurate | M | H | Template explanations ship; AI optional, local, grounded | Open |
 | R9 | Benchmark not meaningful | L | M | Documented dataset + machine | Open |
 | R10 | Licensing/attribution incomplete | L–M | H | Data source register filled at ingestion | Open |
