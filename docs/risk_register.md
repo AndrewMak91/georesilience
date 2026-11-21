@@ -28,7 +28,7 @@ Reviewed at weeks 1, 4, 8, 13, 17, 23, 28, 32. Status: Open / Watching / Closed.
 | R22 | **Scope creep from the tract/hex toggle** | M | M | Deferred to v1.1 backlog; engine kept unit-agnostic | Watching |
 | R23 | **Mixed data vintages** (2020 Census population weights, ACS 2020–2024, summer 2026 LST): new development since 2020 is missing from the weights | M | M | Record every vintage (DS rows, IR-02); state the mismatch in IR-07 limitations; report ACS counts that can't be allocated (ADR 0003) | Open |
 | R24 | **2026 block file differs from the 2020 block set** (fields or blocks not matching DHC; not yet verified) | L | M | Week 5 check of `GEOID20`, `INTPTLAT20`/`INTPTLON20` and the LA County block set against DHC; fall back to the 2020 file (DS-10) | Open |
-| R25 | **Census Data API now requires a key** (brings key handling into the repo) | M | M | Use the bulk summary files (no key); download the raw files in Week 5 and keep them in `data/raw/` with their URLs recorded; if bulk files are retired, fall back to the API with the key in `.env` only, never committed (R14) | Open |
+| R25 | **Census Data API now requires a key** (brings key handling into the repo) | M | M | Use the bulk summary files (no key); download the raw files in Week 5 and keep them in `data/raw/` with their URLs recorded; if bulk files are retired, fall back to the API with the key in `.env` only, never committed (R14) | Watching |
 | R26 | **Landsat Collection 3 released mid-project** (Collection 2 superseded under the newest-vintage rule) | L–M | M | Record scene IDs and collection in DS-03; decide in Week 5, with better information, how to handle a Collection 3 release | Open |
 | R27 | **Too few LST pixels per small block** for population-weighted heat (30 m pixels resampled from 100 m thermal; many urban blocks are small) | H | M | Documented in `data_sources.md` ("Heat resolution vs block size"); define the per-block LST method in Week 9 methodology; flag blocks with no valid pixel (missing, not 0); test with the Week 10 synthetic raster | Open |
 
@@ -37,14 +37,17 @@ Reviewed at weeks 1, 4, 8, 13, 17, 23, 28, 32. Status: Open / Watching / Closed.
 ### Week 1 — 2026-11-20
 
 - **Watching** (mitigation in place and working): R1 and R15 (local build, 2/2 tests and the last
-  three CI runs pass with GDAL 3.8.4); R13 (`check_env.sh` warns when `ANTHROPIC_API_KEY` is set).
+  three CI runs pass with GDAL 3.8.4); R13 (`check_env.sh` warns when `ANTHROPIC_API_KEY` is set);
+  R25 (bulk files need no key; re-verified 2026-11-20).
 - **Updated:** R2 mitigation now reflects block/block-group joins and verified 2020-based codes;
   R7 contract week corrected to 24; R10 notes licenses recorded for five datasets; R14 scan week
   corrected to 32 (matches ROADMAP); R16 and R21 rewritten for ADR 0003; R18 wording no longer
   tract-only.
 - **New** from Week 1 decisions (ADR 0003, newest vintages): R23 mixed vintages, R24 2026 block
   file unverified, R25 Census API key, R26 Landsat Collection 3, R27 small blocks vs LST pixels.
-- **Decided:** R25 — Census data via bulk files, not the API (note in `data_sources.md`). R26 —
+- **Decided:** R25 — Census data via bulk files, not the API (note in `data_sources.md`); keep the
+  Week 5 raw downloads in `data/raw/` with URLs recorded, and fall back to the API (key in `.env`
+  only) if bulk files are retired. R26 —
   handling of a Collection 3 release decided in Week 5. R27 — limitation documented in
   `data_sources.md`; method set in Week 9.
 - **Open questions:** R16 fallback trigger ("dominate") has no threshold yet.
