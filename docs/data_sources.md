@@ -5,7 +5,7 @@ Fill one row per dataset **before** using it. Verify licenses on the source page
 | ID | Indicator | Dataset | Publisher | Vintage | Format | Unit / CRS | License / attribution | Redistributable sample? | Notes |
 |---|---|---|---|---|---|---|---|---|---|
 | DS-01 | Boundaries | TIGER/Line census tracts | U.S. Census Bureau | | Shapefile | EPSG:4269 (NAD83) | | | Join key `GEOID` (11 digits) |
-| DS-02 | V (vulnerability) | ACS 5-year detailed/subject tables | U.S. Census Bureau | | CSV / API | counts, % | | | Only for fields not in the 2020 Census (poverty, no-vehicle households). Keep margins of error; match tract vintage to DS-01 |
+| DS-02 | V (vulnerability) | ACS 5-year detailed tables C17002 (ratio of income to poverty level) and B25044 (tenure by vehicles available), block group | U.S. Census Bureau | | CSV / API | counts | | | Only for fields not in the 2020 Census. Join key `GEOID` (12 digits) = first 12 digits of a block's `GEOID20`. Verify block-group availability in Week 5; fallback is tract level (ADR 0003). Keep margins of error (larger at block group); use 2020-based geography |
 | DS-09 | V + population weights | 2020 Census Demographic and Housing Characteristics (DHC), block level | U.S. Census Bureau | 2020 | CSV / API | counts | | | Total population, age 65+, 65+ living alone (verify which tables are published at block level). Block counts carry differential-privacy noise; use summed to hexes, not per block. Join key `GEOID20` (15 digits) |
 | DS-10 | Population allocation | TIGER/Line 2020 census blocks | U.S. Census Bureau | 2020 | Shapefile | EPSG:4269 (NAD83) | | | Use the internal point (`INTPTLAT20`, `INTPTLON20`), which is guaranteed inside the block, rather than a computed centroid |
 | DS-03 | H (heat) | Landsat Collection 2 Level-2 surface temperature (summer, low cloud) | USGS (via a STAC catalog) | | Cloud-Optimized GeoTIFF | Kelvin (scaled) | | | LST ≠ air temperature; record scene IDs, dates, STAC endpoint, and scaling factors |
@@ -34,5 +34,5 @@ row above before using any of these:
 
 - Raw downloads go in `data/raw/` (git-ignored). Clipped samples go in `data/sample/`.
 - Record download date and exact URL/query in the Notes column.
-- Boundary vintage and ACS vintage must use the same tract definitions (2020-based tracts for
-  ACS 2020+).
+- Boundary vintage and ACS vintage must use the same tract and block-group definitions (2020-based
+  geography for ACS 2020+), so block-group codes match the 2020 block `GEOID20` prefixes.

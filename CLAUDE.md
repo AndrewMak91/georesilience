@@ -20,11 +20,12 @@ Current phase and tasks: @docs/ROADMAP.md. Architecture: @docs/architecture.md.
 - QGIS was not installed during setup. When I reach Week 7 (or any task needing a reference GIS
   check), remind me to install it first: `winget install --id OSGeo.QGIS_LTR -e`.
 
-## Study area and unit (ADR 0002)
+## Study area and unit (ADR 0002, ADR 0003)
 
 - Los Angeles County; unit of analysis is **H3 res 8** hexes (`h3_id`). Demographics come from
-  2020 Census blocks (`GEOID20`) plus ACS tracts (`GEOID`, poverty/vehicles only); both are
-  allocated to hexes by block internal point. Heat is population-weighted (ADR 0002, Amendment 1).
+  2020 Census blocks (`GEOID20`) plus ACS block groups (12-digit `GEOID`, poverty/vehicles only;
+  tracts as fallback); both are allocated to hexes by block internal point. Heat is
+  population-weighted (ADR 0003).
 - Keep the engine unit-agnostic: the unit polygon layer and ID field come from config, never hard-coded.
 - Do **not** build a tract/hex toggle in v1. It's in the v1.1 backlog in ROADMAP.md. If a request
   would add new scope, point me to the backlog instead.

@@ -3,8 +3,10 @@
 ```mermaid
 flowchart LR
     subgraph Inputs["Public inputs (data/raw, git-ignored)"]
-        B[Tract boundaries<br/>TIGER/Line]
-        D[Demographics<br/>ACS tables]
+        U[Unit grid<br/>H3 res 8 GeoPackage]
+        BL[2020 blocks + internal points<br/>TIGER/Line]
+        P[Block counts<br/>2020 Census DHC]
+        D[Poverty, vehicles<br/>ACS block groups]
         T[Heat raster<br/>Landsat LST]
         C[Canopy raster<br/>NLCD]
     end
@@ -12,7 +14,7 @@ flowchart LR
     subgraph Engine["C++20 engine (GDAL/OGR) — source of truth"]
         IO[io<br/>open, read, CRS report]
         VAL[validation<br/>IDs, nulls, geometry]
-        SP[spatial<br/>reproject, join, zonal stats]
+        SP[spatial<br/>reproject, join, block → hex allocation,<br/>zonal stats]
         AN[analytics<br/>normalize, weight, rank, scenarios]
         CLI[cli<br/>info / prepare / score]
     end
@@ -28,7 +30,7 @@ flowchart LR
         AI[Optional local LLM<br/>off by default]
     end
 
-    B & D & T & C --> IO --> VAL --> SP --> AN --> G & J
+    U & BL & P & D & T & C --> IO --> VAL --> SP --> AN --> G & J
     CLI -.drives.-> IO
     J --> DASH --> EXP
     DASH -.optional.-> AI
@@ -43,6 +45,9 @@ flowchart LR
 
 - **Unit of analysis:** any polygon layer + ID field named in config. v1 uses an H3 res 8 grid
   generated once in Python (`scripts/make_h3_grid.py`); the C++ engine has no H3 dependency.
+- **Population allocation (ADR 0003):** `spatial` assigns each 2020 block to the unit containing its
+  internal point and splits ACS block-group counts to blocks by population share. The block layer,
+  ID, and population fields come from config, so allocation works for any unit layer.
 
 ## Module responsibilities
 

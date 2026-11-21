@@ -19,10 +19,10 @@ Reviewed at weeks 1, 4, 8, 13, 17, 23, 28, 32. Status: Open / Watching / Closed.
 | R13 | **Unexpected costs** (API, hosting, Claude Code billing an API key) | M | M | `docs/hosting.md`; env check warns on `ANTHROPIC_API_KEY` | Open |
 | R14 | **Secrets leaked to public repo** | L | H | `.env` ignored; push protection; Week 26 scan | Open |
 | R15 | **Anaconda GDAL/PROJ conflicts with system GDAL** | M | M | Build in WSL with conda deactivated | Open |
-| R16 | **ACS small-area estimate unreliability** | H | M | Carry MOE; flag CV > 30 % | Open |
+| R16 | **ACS small-area estimate unreliability** (worse at block group, ADR 0003) | H | M | Carry MOE; flag CV > 30 %; tract fallback if block-group flags dominate | Open |
 | R17 | **Over-reliance on AI-generated code** | M | H | Tests written/reviewed by hand for scoring math; read every diff | Open |
 | R18 | **Outcome data unavailable at tract level** (health data often by ZIP/county, suppressed small counts) | H | M | Accept coarser level with areal aggregation; fallback: air-temperature campaign data | Open |
 | R19 | **Circular validation** (validating against the same LST used as an input) | M | H | Validate only against independent outcomes; documented in Week 19 | Open |
 | R20 | **Spatial leakage in ML evaluation** (random CV overstates accuracy) | M | M | Spatial block cross-validation | Open |
-| R21 | **Tract → hex interpolation error** (assumes even population within tracts) | M | M | Document as a limitation; test totals; dasymetric version in v1.1 | Open |
+| R21 | **Block → hex allocation error** (each block assigned whole to one hex by internal point; 2020 differential-privacy noise; ACS block-group fields split by population share) | L | M | ADR 0003; conservation test (Week 7); use block counts summed to hexes only; flag low-population hexes; document block-group detail (IR-07); finer within-block allocation in v1.1 | Open |
 | R22 | **Scope creep from the tract/hex toggle** | M | M | Deferred to v1.1 backlog; engine kept unit-agnostic | Watching |

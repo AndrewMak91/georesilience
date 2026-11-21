@@ -3,9 +3,9 @@
 > **DRAFT for review (Week 1).** Remove this note once approved.
 
 Sources: `docs/plan/project_plan_v1.0.md` (§1.3 success criteria, §2.1 scope, §8.3 interpretation,
-priority order), `docs/ROADMAP.md` milestone gates, ADR 0002 (study area and unit), and Week 1
-decisions (2026-11-19): population allocation by Census 2020 block, population-weighted heat,
-exposure columns, hybrid Census 2020 + ACS demographics.
+priority order), `docs/ROADMAP.md` milestone gates, ADR 0002 (study area and unit), and ADR 0003
+(2026-11-19): population allocation by Census 2020 block, population-weighted heat, exposure
+columns, hybrid Census 2020 + ACS block-group demographics.
 
 Priority: **P1** essential · **P2** high value · **P3** optional (must never put P1 at risk).
 
@@ -28,11 +28,11 @@ funding.
 |---|---|---|---|---|
 | FR-01 | Report metadata for a vector file (layers, features, geometry type, CRS) | P1 | M1 | — |
 | FR-02 | Report metadata for a raster file (size, bands, type, nodata, CRS, geotransform) | P1 | M1 | — |
-| FR-03 | Join Census 2020 block counts to blocks (15-digit `GEOID20`) and ACS estimates to tracts (11-digit `GEOID`); report duplicates, unmatched records, and missing values | P1 | M2 | FR-01 |
+| FR-03 | Join Census 2020 block counts to blocks (15-digit `GEOID20`) and ACS estimates to block groups (12-digit `GEOID`; tracts as fallback); report duplicates, unmatched records, and missing values | P1 | M2 | FR-01 |
 | FR-04 | Carry ACS margins of error; flag unreliable estimates | P1 | M2 | FR-03 |
 | FR-05 | Detect missing or unexpected CRS; reproject to one projected CRS | P1 | M2 | FR-01, FR-02 |
 | FR-06 | Check geometry validity with a documented repair-or-reject policy | P1 | M2 | FR-01 |
-| FR-07 | Allocate people to hexes by where they live: Census 2020 block counts go to the hex containing the block's internal point; ACS tract counts are split to blocks by population share, then summed per hex; rates computed after allocation | P1 | M2 | FR-03, FR-05, FR-06 |
+| FR-07 | Allocate people to hexes by where they live: Census 2020 block counts go to the hex containing the block's internal point; ACS block-group counts are split to blocks by population share, then summed per hex; rates computed after allocation | P1 | M2 | FR-03, FR-05, FR-06 |
 | FR-08 | One `prepare` command: raw → validated hex GeoPackage + quality report | P1 | M2 | FR-03 – FR-07 |
 | FR-09 | Zonal statistics per hex: **population-weighted heat** (mean LST per block, averaged per hex weighted by block population), plain area-mean heat for comparison, canopy share; flag hexes with no valid pixels | P1 | M3 | FR-02, FR-05, FR-07, FR-08 |
 | FR-10 | Min-max and percentile normalization (handle min == max) | P1 | M3 | FR-07, FR-09 |
@@ -78,7 +78,7 @@ From plan §8.3. Wherever results are shown (dashboard, report, README), the rea
 | IR-04 | Which weights produced the score shown |
 | IR-05 | How much each indicator contributes to a selected hex's score |
 | IR-06 | Whether that hex's rank changes under the other scenarios |
-| IR-07 | What the score cannot establish: no individual prediction; LST ≠ air temperature; poverty and vehicle data are tract-level even when shown per hex; data vintages |
+| IR-07 | What the score cannot establish: no individual prediction; LST ≠ air temperature; poverty and vehicle data are block-group-level even when shown per hex; data vintages |
 | IR-08 | Data-quality flags: few residents, unreliable ACS estimate, no valid pixels |
 
 Wording rule: high-scoring areas "may warrant further investigation". Never "at risk of illness",
