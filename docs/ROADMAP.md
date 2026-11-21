@@ -184,7 +184,7 @@ scores back.
 
 **Week 23 — Notebook polish & M5 review** (3.5 h)
 - [ ] Clean, re-runnable notebooks: `analysis/01_eda.ipynb`, `02_validation.ipynb`, `03_ml_lst.ipynb`
-- [ ] Add exported validation/ML summaries to the results contract for the dashboard
+- [ ] Export validation/ML summaries for the dashboard, ready to add to the results contract in Week 24
 - [ ] Tag `v0.5.0`, write `docs/reviews/M5.md`
 
 ## M6 — Interface and optional AI (Weeks 24–28)

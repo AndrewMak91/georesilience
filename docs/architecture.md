@@ -46,7 +46,9 @@ flowchart LR
     end
 
     CFG & U & BL & P & D & T & C --> IOR
-    IOR --> VAL --> SP --> AN --> IOW
+    IOR --> VAL --> SP
+    SP -- prepare --> IOW
+    SP -- score --> AN --> IOW
     IOW -- prepare --> PG & QR
     PG -- score --> IOR
     IOW -- score --> G & J
