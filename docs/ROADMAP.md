@@ -1,6 +1,8 @@
 # GeoResilience Roadmap
 
-32 weeks · ~116 hours · 3–4 h/week. **Progress is tracked by checkboxes, not dates**: the current step
+32 weeks · ~116 hours of planned work · 3–4 h/week. **Learning mode** (see CLAUDE.md): each week has a
+_Mode_ line. "**You write**" weeks are coded by you with Claude giving hints and reviews; expect those
+to take 1.5–2× longer, which is fine because progress is tracked by checkboxes. **Progress is tracked by checkboxes, not dates**: the current step
 is the first week with unchecked items, however long it takes to get there. Derived from the Project Plan v1.0, with the changes listed in
 [Changes from plan v1.0](#changes-from-plan-v10). A milestone is complete when its **acceptance
 gate** passes, not when its week ends.
@@ -46,13 +48,17 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [x] CI workflow green on GitHub (moved earlier than plan v1.0)
 - [x] Record exact compiler / CMake / GDAL versions in `docs/dev_setup.md` (done during setup)
 
-**Week 3 — GDAL vector *and* raster reading** (3.5 h)
+**Week 3 — GDAL vector *and* raster reading** (4 h)
+_Mode: Pair: Claude explains each GDAL call, you type it. Setup first: editor + debugger._
+- [ ] Editor setup: open the project in VS Code **through WSL**; install the C/C++, CMake Tools and Python extensions **in WSL: Ubuntu**; select the `dev` preset; build and run tests from VS Code
+- [ ] Debugger setup: launch configuration for `georesilience`; set a breakpoint in `main.cpp` and step through `--version`
 - [ ] `georesilience info <path>` opens a vector file: layer count, feature count, geometry type, CRS
 - [ ] Same command on a GeoTIFF: size, band count, data type, nodata, CRS, geotransform
 - [ ] Missing file / unsupported file → clear error and non-zero exit code
 - [ ] Unit tests using tiny fixtures in `tests/data/`
 
 **Week 4 — Refactor & M1 review** (3.5 h)
+_Mode: Pair: you lead the refactor; Claude reviews._
 - [ ] Split I/O (`src/io`) from CLI reporting (`src/cli`)
 - [ ] Fresh clone → build → test following only the README
 - [ ] Update risk register (build/dependency risks)
@@ -61,6 +67,7 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 ## M2 — Spatial data engineering pipeline (Weeks 5–8)
 
 **Week 5 — Data acquisition** (3.5 h)
+_Mode: Pair for downloads/STAC; **You write** `make_h3_grid.py`._
 - [ ] Download tract boundaries (TIGER/Line) for the study area
 - [ ] Pull ACS 5-year poverty (C17002) and no-vehicle households (B25044) at **block group**; first confirm both are published at block group with 2020-based codes, else use tracts (ADR 0003)
 - [ ] Pull 2020 Census DHC block counts (population, age 65+, 65+ living alone) and TIGER/Line 2020 blocks
@@ -72,12 +79,14 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Create `.venv` with `h3` and `geopandas`; write `scripts/make_h3_grid.py` to generate the H3 res 8 grid over LA County and save `data/interim/h3_r8.gpkg` (ID field `h3_id`)
 
 **Week 6 — Attribute joins & validation** (3.5 h)
+_Mode: Pair; **You write** the duplicate/missing-ID tests._
 - [ ] Join 2020 block counts to blocks on `GEOID20`; link ACS block groups to blocks by the 12-digit `GEOID` prefix
 - [ ] Report duplicates, unmatched records, missing/invalid numbers (never silently zero)
 - [ ] Carry ACS margins of error and flag unreliable estimates
 - [ ] Tests for duplicate and missing IDs
 
 **Week 7 — CRS & geometry quality** (3.5 h)
+_Mode: Pair: allocation logic explained step by step; **You write** the allocation tests._
 - [ ] Install QGIS (skipped at M0): `winget install --id OSGeo.QGIS_LTR -e`, about 2–3 GB
 - [ ] Detect missing/unexpected CRS; reproject to one projected CRS for area/distance (e.g. the local UTM zone)
 - [ ] Geometry validity check with a documented repair-or-reject policy
@@ -86,21 +95,25 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Test allocation: hex totals sum back to block/block-group/county totals within tolerance; report blocks whose internal point falls in no hex
 
 **Week 8 — Pipeline integration & M2 review** (3.5 h)
+_Mode: Claude writes `prepare` plumbing, you review; **You write** the first notebook._
 - [ ] `georesilience prepare --config ... --out ...` runs raw → clean hex GeoPackage; unit layer + ID field come from config (unit-agnostic)
 - [ ] Logging + quality report written alongside output
 - [ ] Integration test on `data/sample/`
 - [ ] Start the Python analysis layer: `analysis/requirements.txt` (geopandas, rasterio, xarray/rioxarray, jupyter) and a first notebook that loads the GeoPackage and maps it
+- [ ] Jupyter setup: install the Jupyter extension **in WSL: Ubuntu**, register the `.venv` kernel, run the notebook from VS Code
 - [ ] Tag `v0.2.0`, write `docs/reviews/M2.md`
 
 ## M3 — Spatial analytics engine (Weeks 9–13)
 
 **Week 9 — Indicator specification** (3.5 h)
+_Mode: **You write**: methodology and hand-calculated reference values (no code)._
 - [ ] `docs/methodology.md`: definition, unit, direction, source for H, V, G
 - [ ] Define how canopy % becomes "lack of green space" (G = 1 − canopy share)
 - [ ] Missing-data rule per indicator
 - [ ] Hand-calculated reference table (5–10 hexes) in `tests/data/reference_scores.csv`
 
 **Week 10 — Zonal statistics & indicators** (3.5 h)
+_Mode: Pair: zonal statistics._
 - [ ] Raster zonal mean (heat) and zonal share (canopy) per hex
 - [ ] Population-weighted heat: mean LST per block, averaged per hex weighted by block population (area mean kept for comparison); exposure columns (residents, residents 65+)
 - [ ] Vulnerability indicator from ACS fields
@@ -108,17 +121,20 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Tests against a tiny synthetic raster with known answers
 
 **Week 11 — Normalization & scoring** (3.5 h)
+_Mode: **You write**: normalization, weights, scoring (tests first). Claude gives hints and reviews only._
 - [ ] Min-max and percentile normalization (handle min == max)
 - [ ] Weight validation: non-negative, sum to 1 within tolerance
 - [ ] Composite score + rank; ties handled deterministically
 - [ ] Tests match `reference_scores.csv` within tolerance
 
 **Week 12 — Config, export, reproducibility** (3.5 h)
+_Mode: Claude writes config/export plumbing, you review; **You write** the reproducibility test._
 - [ ] Weights/settings in `config/*.json`
 - [ ] Export GeoPackage + GeoJSON + CSV with run metadata (config hash, input dates, engine version)
 - [ ] Re-run test: same inputs + config → identical outputs
 
 **Week 13 — Integration & M3 review** (3.5 h)
+_Mode: **You write**: inspection and spot-checks._
 - [ ] Full run on LA County; inspect top/bottom ranked hexes
 - [ ] Spot-check 3 hexes by hand
 - [ ] Quick static map for sanity
@@ -130,21 +146,26 @@ Done in Python (`analysis/`, geopandas / rasterio / xarray, Jupyter). Notebooks 
 never feed scores back.
 
 **Week 14 — Weighting scenarios** (3.5 h)
+_Mode: **You write** (Python)._
 - [ ] ≥3 scenario configs (baseline 40/35/25, equal, vulnerability-heavy)
 - [ ] Rank comparison table/chart; list hexes that move most
 
 **Week 15 — Indicator relationships & data quality** (3.5 h)
+_Mode: **You write** (Python, PySAL)._
+- [ ] Add `pysal` (esda, libpysal), `scipy`, `matplotlib` to `analysis/requirements.txt` and install
 - [ ] Descriptive stats, distributions, outliers
 - [ ] Correlations (Spearman) and redundancy check
 - [ ] Hotspot analysis of the composite score: Moran's I and LISA clusters (PySAL)
 - [ ] Missing-data and MOE effects
 
 **Week 16 — Sensitivity & validation** (3.5 h)
+_Mode: **You write** (Python)._
 - [ ] Spearman/Kendall rank correlation between scenarios; top-k overlap
 - [ ] Monte Carlo weight perturbation (Dirichlet) → rank-interval per hex
 - [ ] Independent check of selected outputs in QGIS or GeoPandas
 
 **Week 17 — Evaluation report & M4 review** (3.5 h)
+_Mode: **You write** (report)._
 - [ ] `docs/model_validation.md` with charts
 - [ ] Limitations register updated (MAUP, ecological fallacy, LST ≠ air temperature, data vintages)
 - [ ] Tag `v0.4.0`, write `docs/reviews/M4.md`
@@ -156,33 +177,40 @@ Career-focused phase: Python, SQL, statistics, and ML on top of the engine's out
 scores back.
 
 **Week 18 — Spatial SQL with PostGIS** (3.5 h)
+_Mode: **You write** (SQL). Setup guided._
 - [ ] Install PostgreSQL + PostGIS in WSL (`sudo apt install postgresql postgis`)
 - [ ] Load hexes, indicators, and scores with `ogr2ogr`
 - [ ] Write 5 saved queries in `sql/` (e.g. top-10 hexes per county subdivision, hexes within 500 m of a park layer, score summary by income band, spatial join to an outcome layer)
 - [ ] Document the schema in `docs/data_dictionary.md`
 
 **Week 19 — External outcome data** (3.5 h)
+_Mode: **You write** (research + register rows)._
 - [ ] Find a real outcome to validate against: heat-related ER visits or EMS/911 heat calls (state/county health data), or measured air temperature from an urban heat mapping campaign
 - [ ] Record it in `docs/data_sources.md`, including its geographic level (tract, ZIP, county) and years
 - [ ] Note the circularity trap: measured land surface temperature is already the H input, so it cannot validate the composite score
 
 **Week 20 — Validation against outcomes** (3.5 h)
+_Mode: **You write** (Python, bootstrap)._
 - [ ] Align geographies (areal interpolation or aggregation if outcomes are by ZIP/county)
 - [ ] Compare scores to outcomes: rank correlation, outcome rates by score quintile, map of mismatches
 - [ ] Bootstrap confidence intervals; report error and uncertainty plainly
 - [ ] Write "How I know the score works (and where it doesn't)" section in `docs/model_validation.md`
 
 **Week 21 — ML: predicting surface temperature** (3.5 h)
+_Mode: Pair first, then **You write** (scikit-learn)._
+- [ ] Add `scikit-learn`, `lightgbm`, `shap` to `analysis/requirements.txt` and install
 - [ ] Features per H3 res 8 hex: tree canopy, impervious surface, land cover shares, NDVI, optionally elevation
 - [ ] Baseline linear model vs gradient boosting (scikit-learn / LightGBM)
 - [ ] Spatial block cross-validation (geographic folds, not Census blocks), not random splits; report RMSE/MAE and R²
 
 **Week 22 — ML interpretation** (3.5 h)
+_Mode: **You write** (interpretation)._
 - [ ] Feature importance with SHAP or permutation importance; partial dependence for canopy and impervious surface
 - [ ] Residual map + Moran's I on residuals (spatial autocorrelation check, PySAL)
 - [ ] Plain-language takeaway: e.g. "each 10-point canopy increase is associated with ~X °C cooler surfaces here"
 
 **Week 23 — Notebook polish & M5 review** (3.5 h)
+_Mode: **You write**._
 - [ ] Clean, re-runnable notebooks: `analysis/01_eda.ipynb`, `02_validation.ipynb`, `03_ml_lst.ipynb`
 - [ ] Export validation/ML summaries for the dashboard, ready to add to the results contract in Week 24
 - [ ] Tag `v0.5.0`, write `docs/reviews/M5.md`
@@ -190,26 +218,32 @@ scores back.
 ## M6 — Interface and optional AI (Weeks 24–28)
 
 **Week 24 — Results contract & layout** (3.5 h)
+_Mode: Pair._
 - [ ] `docs/results_contract.md`: exact exported fields the dashboard may read
 - [ ] Wireframe: map, ranked table, scenario selector, hex detail, validation and ML findings panel
 - [ ] Decide host (see `docs/hosting.md`): Streamlit Community Cloud or GitHub Pages
 
 **Week 25 — Map, ranks, charts** (3.5 h)
+_Mode: Pair (Streamlit)._
+- [ ] Install Streamlit (+ a map component) in `.venv`; run the app locally
 - [ ] Choropleth with clear legend (colorblind-safe palette)
 - [ ] Ranked table, summary chart, methodology/source notes
 - [ ] Automated check: dashboard values == exported values
 
 **Week 26 — Scenario controls & explanations** (3.5 h)
+_Mode: Pair._
 - [ ] Predefined scenarios from engine exports
 - [ ] Optional custom weights: dashboard does only the weighted sum of engine-exported *normalized* indicators, with a parity test against the engine
 - [ ] Per-hex contribution breakdown; two-hex comparison
 
 **Week 27 — Explanations (template first, AI optional)** (3.5 h)
+_Mode: Pair: template explanations, then optional local LLM + evaluation tests._
 - [ ] Deterministic template explanations ("Hex A ranks above B mainly because…") — this ships publicly
-- [ ] Optional: local LLM (e.g. Ollama) or API, *local only*, off by default, grounded in result records
+- [ ] Optional: install Ollama in WSL and pull a small model (check disk space first); local LLM, off by default, grounded in result records
 - [ ] Reliability tests: unsupported questions get a limitation statement
 
 **Week 28 — Integration, deploy & M6 review** (3.5 h)
+_Mode: Pair._
 - [ ] Deploy dashboard to the free host; confirm no secrets are required
 - [ ] End-to-end demo run
 - [ ] Tag `v0.6.0`, write `docs/reviews/M6.md`
@@ -217,20 +251,24 @@ scores back.
 ## M7 — Testing, performance, release (Weeks 29–32)
 
 **Week 29 — Test hardening** (3.5 h)
+_Mode: Pair._
 - [ ] Coverage of validation, normalization, scoring, invalid weights, missing inputs
 - [ ] End-to-end test on sample data in CI
 
 **Week 30 — Benchmark & clean build** (3.5 h)
+_Mode: Pair._
 - [ ] Time each pipeline stage on a documented dataset + machine
 - [ ] One justified optimization (or a note why none was needed)
 - [ ] Clean build from scratch in a fresh WSL distro or the CI runner
 
 **Week 31 — Documentation & portfolio** (3.5 h)
+_Mode: **You write** (README, write-up, brief); Claude edits._
 - [ ] Final README structured as problem → data → method → results → limitations, with screenshots and live demo link
 - [ ] Architecture, data dictionary, methodology, validation docs final
 - [ ] Portfolio write-up (blog-style) plus a one-page brief for a non-technical reader (e.g. a city planner)
 
 **Week 32 — Release** (3.5 h)
+_Mode: Pair._
 - [ ] Secret scan, license check for redistributed data
 - [ ] Tag `v1.0.0` GitHub Release with sample outputs
 - [ ] Record a short demo video/GIF
@@ -291,3 +329,7 @@ before any full removal (Level 3).
     Census 2020 block instead of uniform tract area, heat is population-weighted, and exposure columns
     are exported. Demographics become a hybrid of 2020 Census (block) and ACS (block group, tract as
     fallback; poverty and vehicles only). Adds ~1–1.5 h across Weeks 5 and 10. Esri enrichment goes to the v1.1 backlog.
+12. **Learning mode added before Week 3:** every week has a _Mode_ line (Pair / **You write** /
+    Claude writes), with tool setup placed in the week that first needs it: editor + debugger
+    (Week 3), Jupyter (Week 8), PySAL (Week 15), ML libraries (Week 21), Streamlit (Week 25),
+    Ollama (Week 27, optional). "You write" weeks are expected to run longer than planned.

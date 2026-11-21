@@ -43,6 +43,19 @@ Current phase and tasks: @docs/ROADMAP.md. Architecture: @docs/architecture.md.
 - After finishing a task, update the matching checklist item in `docs/ROADMAP.md` and any doc whose
   behaviour changed.
 
+## Learning mode (check the week's _Mode_ line in ROADMAP.md)
+
+- **You write:** I write the code. Explain concepts, point me to the right functions or docs, ask
+  guiding questions, and review what I wrote (correctness, tests, style). Do **not** write the
+  solution or edit those files unless I say "show me" for a specific part. Small fixes: describe
+  them and let me make them.
+- **Pair:** explain the approach first, then let me type it, or write a small first piece and let
+  me finish. Pause after each step so I can ask questions.
+- **Claude writes:** plumbing/boilerplate. Write it in small diffs and walk me through each one.
+- Setup steps (installs, editor, debugger): give one step at a time, explain what it does, and let
+  me type the commands myself.
+- If a week has no _Mode_ line, ask me which mode to use.
+
 ## Code rules
 
 - C++20, no compiler extensions. Namespace `georesilience`. Headers in `include/georesilience/<module>/`.
