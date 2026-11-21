@@ -23,7 +23,7 @@ Reviewed at weeks 1, 4, 8, 13, 17, 23, 28, 32. Status: Open / Watching / Closed.
 | R17 | **Over-reliance on AI-generated code** | M | H | Tests written/reviewed by hand for scoring math; read every diff | Open |
 | R18 | **Outcome data unavailable at fine geography** (hex/tract; health data often by ZIP/county, suppressed small counts) | H | M | Accept coarser level with areal aggregation; fallback: air-temperature campaign data | Open |
 | R19 | **Circular validation** (validating against the same LST used as an input) | M | H | Validate only against independent outcomes; documented in Week 19 | Open |
-| R20 | **Spatial leakage in ML evaluation** (random CV overstates accuracy) | M | M | Spatial block cross-validation | Open |
+| R20 | **Spatial leakage in ML evaluation** (random CV overstates accuracy) | M | M | Spatial block cross-validation (geographic folds, not Census blocks) | Open |
 | R21 | **Block → hex allocation error** (each block assigned whole to one hex by internal point; 2020 differential-privacy noise; ACS block-group fields split by population share) | L | M | ADR 0003; conservation test (Week 7); use block counts summed to hexes only; flag low-population hexes; document block-group detail (IR-07); finer within-block allocation in v1.1 | Open |
 | R22 | **Scope creep from the tract/hex toggle** | M | M | Deferred to v1.1 backlog; engine kept unit-agnostic | Watching |
 | R23 | **Mixed data vintages** (2020 Census population weights, ACS 2020–2024, summer 2026 LST): new development since 2020 is missing from the weights | M | M | Record every vintage (DS rows, IR-02); state the mismatch in IR-07 limitations; report ACS counts that can't be allocated (ADR 0003) | Open |

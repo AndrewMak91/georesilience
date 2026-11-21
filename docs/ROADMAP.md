@@ -34,10 +34,10 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 ## M1 — Development foundation (Weeks 1–4)
 
 **Week 1 — Requirements & data scouting** (3.5 h)
-- [ ] Finalize MVP requirements checklist in `docs/requirements.md`
-- [ ] Fill in the first three rows of `docs/data_sources.md` (boundaries, demographics, heat)
+- [x] Finalize MVP requirements checklist in `docs/requirements.md`
+- [x] Fill in the first three rows of `docs/data_sources.md` (boundaries, demographics, heat)
 - [x] Decide unit of analysis: H3 res 8 hexes; tracts (11-digit `GEOID`) remain the demographic source (decided at M0)
-- [ ] Review `docs/architecture.md` diagram; adjust if needed
+- [x] Review `docs/architecture.md` diagram; adjust if needed
 - [x] Open the initial risk review in `docs/risk_register.md`
 
 **Week 2 — C++ / CMake build + CI** (3.5 h)
@@ -175,7 +175,7 @@ scores back.
 **Week 21 — ML: predicting surface temperature** (3.5 h)
 - [ ] Features per H3 res 8 hex: tree canopy, impervious surface, land cover shares, NDVI, optionally elevation
 - [ ] Baseline linear model vs gradient boosting (scikit-learn / LightGBM)
-- [ ] Spatial (block) cross-validation, not random splits; report RMSE/MAE and R²
+- [ ] Spatial block cross-validation (geographic folds, not Census blocks), not random splits; report RMSE/MAE and R²
 
 **Week 22 — ML interpretation** (3.5 h)
 - [ ] Feature importance with SHAP or permutation importance; partial dependence for canopy and impervious surface

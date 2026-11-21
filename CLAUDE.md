@@ -16,7 +16,7 @@ Current phase and tasks: @docs/ROADMAP.md. Architecture: @docs/architecture.md.
 - The current step is the first week in docs/ROADMAP.md with unchecked items. Calendar dates don't
   matter; at the start of a session, tell me which week and milestone I'm on.
 - Python work lives in `analysis/` and SQL in `sql/`; both read engine exports and never write
-  scores back. In ML work, always use spatial (block) cross-validation.
+  scores back. In ML work, always use spatial block cross-validation (geographic folds, not Census blocks).
 - QGIS was not installed during setup. When I reach Week 7 (or any task needing a reference GIS
   check), remind me to install it first: `winget install --id OSGeo.QGIS_LTR -e`.
 
