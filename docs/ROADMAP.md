@@ -38,7 +38,7 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 - [ ] Fill in the first three rows of `docs/data_sources.md` (boundaries, demographics, heat)
 - [x] Decide unit of analysis: H3 res 8 hexes; tracts (11-digit `GEOID`) remain the demographic source (decided at M0)
 - [ ] Review `docs/architecture.md` diagram; adjust if needed
-- [ ] Open the initial risk review in `docs/risk_register.md`
+- [x] Open the initial risk review in `docs/risk_register.md`
 
 **Week 2 — C++ / CMake build + CI** (3.5 h)
 - [x] `cmake --preset dev && cmake --build --preset dev && ctest --preset dev` passes locally
