@@ -2,26 +2,40 @@
 
 ```mermaid
 flowchart LR
-    subgraph Inputs["Public inputs (data/raw, git-ignored)"]
-        U[Unit grid<br/>H3 res 8 GeoPackage]
+    subgraph Inputs["Inputs"]
+        CFG[Config<br/>config/*.json<br/>unit layer, ID field, weights]
+        U[Unit grid<br/>H3 res 8 GeoPackage<br/>data/interim, from make_h3_grid.py]
         BL[2020 blocks + internal points<br/>TIGER/Line]
         P[Block counts<br/>2020 Census DHC]
-        D[Poverty, vehicles<br/>ACS block groups]
-        T[Heat raster<br/>Landsat LST]
+        D[Poverty, vehicles<br/>ACS block groups + MOE]
+        T[Heat raster<br/>Landsat LST, remote COG via STAC]
         C[Canopy raster<br/>NLCD]
     end
 
     subgraph Engine["C++20 engine (GDAL/OGR) — source of truth"]
-        IO[io<br/>open, read, CRS report]
+        IO[io<br/>open, read, CRS report, write outputs]
         VAL[validation<br/>IDs, nulls, geometry]
         SP[spatial<br/>reproject, join, block → hex allocation,<br/>zonal stats]
         AN[analytics<br/>normalize, weight, rank, scenarios]
         CLI[cli<br/>info / prepare / score]
     end
 
+    subgraph Interim["data/interim (git-ignored)"]
+        PG[(Prepared hex GeoPackage)]
+        QR[Quality report]
+    end
+
     subgraph Outputs["results/ (committed, small)"]
         G[(GeoPackage)]
-        J[GeoJSON + CSV<br/>+ run metadata]
+        J[GeoJSON + CSV<br/>+ run metadata, exposure columns]
+        S[Validation + ML summaries]
+    end
+
+    subgraph Analysis["Python analysis + SQL (reads exports, never writes scores)"]
+        OUT[Outcome data<br/>DS-07]
+        IMP[Impervious raster<br/>DS-06]
+        NB[analysis/<br/>validation, hotspots, ML with spatial CV]
+        DB[(PostGIS + sql/)]
     end
 
     subgraph Present["Presentation (reads exports only)"]
@@ -30,9 +44,17 @@ flowchart LR
         AI[Optional local LLM<br/>off by default]
     end
 
-    U & BL & P & D & T & C --> IO --> VAL --> SP --> AN --> G & J
+    CFG & U & BL & P & D & T & C --> IO
+    IO --> VAL --> SP --> AN --> IO
+    IO -- prepare --> PG & QR
+    PG -- score --> IO
+    IO -- score --> G & J
     CLI -.drives.-> IO
-    J --> DASH --> EXP
+    G & J --> NB
+    G --> DB
+    OUT & IMP --> NB
+    NB --> S
+    J & S --> DASH --> EXP
     DASH -.optional.-> AI
 ```
 

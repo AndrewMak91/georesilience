@@ -131,7 +131,7 @@ never feed scores back.
 
 **Week 14 — Weighting scenarios** (3.5 h)
 - [ ] ≥3 scenario configs (baseline 40/35/25, equal, vulnerability-heavy)
-- [ ] Rank comparison table/chart; list tracts that move most
+- [ ] Rank comparison table/chart; list hexes that move most
 
 **Week 15 — Indicator relationships & data quality** (3.5 h)
 - [ ] Descriptive stats, distributions, outliers
@@ -141,7 +141,7 @@ never feed scores back.
 
 **Week 16 — Sensitivity & validation** (3.5 h)
 - [ ] Spearman/Kendall rank correlation between scenarios; top-k overlap
-- [ ] Monte Carlo weight perturbation (Dirichlet) → rank-interval per tract
+- [ ] Monte Carlo weight perturbation (Dirichlet) → rank-interval per hex
 - [ ] Independent check of selected outputs in QGIS or GeoPandas
 
 **Week 17 — Evaluation report & M4 review** (3.5 h)
@@ -157,8 +157,8 @@ scores back.
 
 **Week 18 — Spatial SQL with PostGIS** (3.5 h)
 - [ ] Install PostgreSQL + PostGIS in WSL (`sudo apt install postgresql postgis`)
-- [ ] Load tracts, indicators, and scores with `ogr2ogr`
-- [ ] Write 5 saved queries in `sql/` (e.g. top-10 tracts per county subdivision, tracts within 500 m of a park layer, score summary by income band, spatial join to an outcome layer)
+- [ ] Load hexes, indicators, and scores with `ogr2ogr`
+- [ ] Write 5 saved queries in `sql/` (e.g. top-10 hexes per county subdivision, hexes within 500 m of a park layer, score summary by income band, spatial join to an outcome layer)
 - [ ] Document the schema in `docs/data_dictionary.md`
 
 **Week 19 — External outcome data** (3.5 h)
@@ -191,7 +191,7 @@ scores back.
 
 **Week 24 — Results contract & layout** (3.5 h)
 - [ ] `docs/results_contract.md`: exact exported fields the dashboard may read
-- [ ] Wireframe: map, ranked table, scenario selector, tract detail, validation and ML findings panel
+- [ ] Wireframe: map, ranked table, scenario selector, hex detail, validation and ML findings panel
 - [ ] Decide host (see `docs/hosting.md`): Streamlit Community Cloud or GitHub Pages
 
 **Week 25 — Map, ranks, charts** (3.5 h)
@@ -202,10 +202,10 @@ scores back.
 **Week 26 — Scenario controls & explanations** (3.5 h)
 - [ ] Predefined scenarios from engine exports
 - [ ] Optional custom weights: dashboard does only the weighted sum of engine-exported *normalized* indicators, with a parity test against the engine
-- [ ] Per-tract contribution breakdown; two-tract comparison
+- [ ] Per-hex contribution breakdown; two-hex comparison
 
 **Week 27 — Explanations (template first, AI optional)** (3.5 h)
-- [ ] Deterministic template explanations ("Tract A ranks above B mainly because…") — this ships publicly
+- [ ] Deterministic template explanations ("Hex A ranks above B mainly because…") — this ships publicly
 - [ ] Optional: local LLM (e.g. Ollama) or API, *local only*, off by default, grounded in result records
 - [ ] Reliability tests: unsupported questions get a limitation statement
 
