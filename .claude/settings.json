@@ -25,6 +25,7 @@
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./data/raw/**)",
+      "Read(./build/**)",
       "Bash(rm -rf:*)",
       "Bash(git push --force:*)"
     ]
