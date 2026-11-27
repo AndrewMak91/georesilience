@@ -50,8 +50,8 @@ Each week's checklist mirrors a GitHub issue (created by `scripts/create_github_
 
 **Week 3 — GDAL vector *and* raster reading** (4 h)
 _Mode: Pair: Claude explains each GDAL call, you type it. Setup first: editor + debugger._
-- [ ] Editor setup: open the project in VS Code **through WSL**; install the C/C++, CMake Tools and Python extensions **in WSL: Ubuntu**; select the `dev` preset; build and run tests from VS Code
-- [ ] Debugger setup: launch configuration for `georesilience`; set a breakpoint in `main.cpp` and step through `--version`
+- [x] Editor setup: open the project in VS Code **through WSL**; install the C/C++, CMake Tools and Python extensions **in WSL: Ubuntu**; select the `dev` preset; build and run tests from VS Code
+- [x] Debugger setup: launch configuration for `georesilience`; set a breakpoint in `main.cpp` and step through `--version`
 - [ ] `georesilience info <path>` opens a vector file: layer count, feature count, geometry type, CRS
 - [ ] Same command on a GeoTIFF: size, band count, data type, nodata, CRS, geotransform
 - [ ] Missing file / unsupported file → clear error and non-zero exit code
