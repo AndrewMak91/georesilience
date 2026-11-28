@@ -45,3 +45,18 @@ call the paid API unless you set that up on purpose.
 | `.claude/commands/*.md` | Yes | Project slash commands |
 | `.claude/settings.local.json` | No (git-ignored) | Your personal overrides |
 | `~/.claude/CLAUDE.md` (in WSL home) | No | Preferences for all your projects |
+
+## Token-saving habits (Claude Code)
+
+1. **Point at the file.** Ask "review `src/io/vector_info.cpp` against Week 3 Task 3"
+   instead of "review my project". Use `@path/to/file` to attach a file by name.
+2. **One task per session, then `/clear`.** Context from the last task is wasted tokens
+   on the next one.
+3. **Paste only the error lines**, not the whole build log, when asking for help.
+4. **Ask for a plan before a big change** (plan mode, Shift+Tab), so a wrong direction
+   costs a short plan and not a rewrite.
+5. **Keep `CLAUDE.md` short.** It loads at the start of every session.
+6. **Use the chat app for concepts**, such as what a header file is. Use Claude Code
+   when it needs to see or run your real files.
+7. **Learning mode saves tokens too:** typing the code yourself and asking for a
+   review of the finished file is cheaper than regenerating whole features.
